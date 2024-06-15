@@ -5,4 +5,4 @@ new:
 	cd ${ARG} \
 		&& go mod init github.com/kyu08/go-system-programming/${ARG} \
 		&& touch main.go \
-		&& echo "package main \n\nfunc main() {}" > main.go
+		&& echo "package main \n\nfunc main() {\n\t\n}" > main.go
