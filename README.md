@@ -29,8 +29,15 @@
     - `io.SectionReader`: `offset`と`n`を指定して一部のデータだけ読み込む
 
 # 第4章 チャネル
+普段goroutineを全然使わないので忘れていることが多かった。以下学んだことメモ。
+
+- バッファなしチャネルでは、受け取り側が受信しないと、送信側もブロックされる。[^4]
+- `for task := range tasks // tasksは任意のch`のように書くと、チャネルに値が入るたびにループが回り、チャネルがクローズされるまでループが回る。
+
+# 第5章 システムコール
 
 
 [^1]: Neovimでのデバッガの環境構築は [nvim-dapでGolangのデバッグ環境構築](https://zenn.dev/saito9/articles/32c57f776dc369) を参考にした
 [^2]: `Sysfd`の定義は golang/go/src/internal/poll/fd_unix.go#L23(https://github.com/golang/go/blob/c83b1a7013784098c2061ae7be832b2ab7241424/src/internal/poll/fd_unix.go#L23) にある。
 [^3]: `io.Pipe`の使いどころに関しては [Go言語のio.Pipeでファイルを効率よくアップロードする方法](https://medium.com/eureka-engineering/file-uploads-in-go-with-io-pipe-75519dfa647b) が大変参考になった。
+[^4]: cf. [kyu08/go-system-programming/4-channel/unbufferedchannel/main.go#L8](https://github.com/kyu08/go-system-programming/blob/b9da4a0ce759b2df4ce884ab61248fb893b60bef/4-channel/unbufferedchannel/main.go#L8)
