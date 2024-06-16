@@ -28,6 +28,9 @@
     - `io.MultiReader`: 複数の`io.Reader`を1つの`io.Reader`にまとめる
     - `io.SectionReader`: `offset`と`n`を指定して一部のデータだけ読み込む
 
+# 第4章 チャネル
+
+
 [^1]: Neovimでのデバッガの環境構築は [nvim-dapでGolangのデバッグ環境構築](https://zenn.dev/saito9/articles/32c57f776dc369) を参考にした
 [^2]: `Sysfd`の定義は golang/go/src/internal/poll/fd_unix.go#L23(https://github.com/golang/go/blob/c83b1a7013784098c2061ae7be832b2ab7241424/src/internal/poll/fd_unix.go#L23) にある。
 [^3]: `io.Pipe`の使いどころに関しては [Go言語のio.Pipeでファイルを効率よくアップロードする方法](https://medium.com/eureka-engineering/file-uploads-in-go-with-io-pipe-75519dfa647b) が大変参考になった。
