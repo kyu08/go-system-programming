@@ -2,16 +2,22 @@ package main
 
 import (
 	"bufio"
-	"bytes"
-	"compress/gzip"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"strings"
-	"time"
 )
+
+var contents = []string{
+	"1111111111111111111111111111111111111111111111111111111111111",
+	"2222222222222222222222222222222222222222222222222222222222222",
+	"3333333333333333333333333333333333333333333333333333333333333",
+	"4444444444444444444444444444444444444444444444444444444444444",
+	"5555555555555555555555555555555555555555555555555555555555555",
+	"6666666666666666666666666666666666666666666666666666666666666",
+}
 
 func isGZiptAcceptable(request *http.Request) bool {
 	return strings.Contains(strings.Join(request.Header["Accept-Encoding"], ","), "gzip")
@@ -21,9 +27,6 @@ func processSession(conn net.Conn) {
 	fmt.Printf("Accept %v\n", conn.RemoteAddr())
 	defer conn.Close()
 	for {
-		// タイムアウトを設定
-		conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-
 		// リクエストを読み込む
 		request, err := http.ReadRequest(bufio.NewReader(conn))
 		if err != nil {
@@ -45,29 +48,14 @@ func processSession(conn net.Conn) {
 		}
 		fmt.Println(string(dump))
 
-		response := http.Response{
-			StatusCode: 200,
-			ProtoMajor: 1,
-			ProtoMinor: 1,
-			Header:     make(http.Header),
+		fmt.Fprintf(conn, strings.Join([]string{
+			"HTTP/1.1 200 OK", "Content-Type: text/plain", "Transfer-Encoding: chunked", "", "",
+		}, "\r\n"))
+		for _, content := range contents {
+			bytes := []byte(content)
+			fmt.Fprintf(conn, "%x\r\n%s\r\n", len(bytes), content)
 		}
-		if isGZiptAcceptable(request) {
-			content := "Hello World (gzipped)\n"
-			// コンテンツをgzip化して転送
-			var buffer bytes.Buffer
-			writer := gzip.NewWriter(&buffer)
-			io.WriteString(writer, content)
-			writer.Close()
-			response.Body = io.NopCloser(&buffer)
-			response.ContentLength = int64(buffer.Len())
-			response.Header.Set("Content-Encoding", "gzip")
-		} else {
-			content := "Hello World\n"
-			response.Body = io.NopCloser(strings.NewReader(content))
-			response.ContentLength = int64(len(content))
-		}
-
-		response.Write(conn)
+		fmt.Fprintf(conn, "0\r\n\r\n")
 	}
 }
 
