@@ -21,7 +21,7 @@ func main() {
 	time.Sleep(wait)
 	ticker := time.Tick(interval)
 	for now := range ticker {
-		conn.Write([]byte(now.String()))
+		_, _ = conn.Write([]byte(now.String()))
 		fmt.Println("Tick: ", now.String())
 	}
 }
